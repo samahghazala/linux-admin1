@@ -1,0 +1,186 @@
+samah@localhost:~$ mkdir labs
+samah@localhost:~$ cd labs
+samah@localhost:~/labs$ mkdir training_plans
+
+samah@localhost:~/labs$ touch training_plans/session{1..2}_training_plan.txt
+samah@localhost:~/labs$ ls training_plans/
+session1_training_plan.txt  session2_training_plan.txt
+
+samah@localhost:~/labs$ touch linuxadmin_{1..2}_part{1..6}.mp3
+samah@localhost:~/labs$ ls
+linuxadmin_1_part5.mp3  linuxadmin_2_part4.mp3
+linuxadmin_1_part1.mp3  linuxadmin_1_part6.mp3  linuxadmin_2_part5.mp3
+linuxadmin_1_part2.mp3  linuxadmin_2_part1.mp3  linuxadmin_2_part6.mp3
+linuxadmin_1_part3.mp3  linuxadmin_2_part2.mp3  training_plans
+linuxadmin_1_part4.mp3  linuxadmin_2_part3.mp3
+
+
+samah@localhost:~/labs$ touch training_cahpter{1..8}.txt
+samah@localhost:~/labs$ ls
+linuxadmin_2_part2.mp3  training_cahpter4.txt
+linuxadmin_1_part1.mp3  linuxadmin_2_part3.mp3  training_cahpter5.txt
+linuxadmin_1_part2.mp3  linuxadmin_2_part4.mp3  training_cahpter6.txt
+linuxadmin_1_part3.mp3  linuxadmin_2_part5.mp3  training_cahpter7.txt
+linuxadmin_1_part4.mp3  linuxadmin_2_part6.mp3  training_cahpter8.txt
+linuxadmin_1_part5.mp3  training_cahpter1.txt   training_plans
+linuxadmin_1_part6.mp3  training_cahpter2.txt
+
+samah@localhost:~/labs$ mkdir linux_admin{1..2}
+samah@localhost:~/labs$ ls
+linux_admin1            linuxadmin_2_part1.mp3  training_cahpter3.txt
+linuxadmin_1_part1.mp3  linuxadmin_2_part2.mp3  training_cahpter4.txt
+linuxadmin_1_part2.mp3  linuxadmin_2_part3.mp3  training_cahpter5.txt
+linuxadmin_1_part3.mp3  linuxadmin_2_part4.mp3  training_cahpter6.txt
+linuxadmin_1_part4.mp3  linuxadmin_2_part5.mp3  training_cahpter7.txt
+linuxadmin_1_part5.mp3  linuxadmin_2_part6.mp3  training_cahpter8.txt
+linuxadmin_1_part6.mp3  training_cahpter1.txt   training_plans
+linux_admin2            training_cahpter2.txt
+
+
+
+samah@localhost:~/labs$ mv *admin_1*  linux_admin1/
+samah@localhost:~/labs$ ls
+linux_admin1            linuxadmin_2_part5.mp3  training_cahpter5.txt
+linux_admin2            linuxadmin_2_part6.mp3  training_cahpter6.txt
+linuxadmin_2_part1.mp3  training_cahpter1.txt   training_cahpter7.txt
+linuxadmin_2_part2.mp3  training_cahpter2.txt   training_cahpter8.txt
+linuxadmin_2_part3.mp3  training_cahpter3.txt   training_plans
+linuxadmin_2_part4.mp3  training_cahpter4.txt
+
+
+samah@localhost:~/labs$ mv *admin_2*  linux_admin2/
+samah@localhost:~/labs$ ls
+linux_admin1           training_cahpter3.txt  training_cahpter7.txt
+linux_admin2           training_cahpter4.txt  training_cahpter8.txt
+training_cahpter1.txt  training_cahpter5.txt  training_plans
+training_cahpter2.txt  training_cahpter6.txt
+
+
+samah@localhost:~/labs$ ls linux_admin1/
+linuxadmin_1_part1.mp3  linuxadmin_1_part3.mp3  linuxadmin_1_part5.mp3
+linuxadmin_1_part2.mp3  linuxadmin_1_part4.mp3  linuxadmin_1_part6.mp3
+samah@localhost:~/labs$ ls linux_admin2/
+linuxadmin_2_part1.mp3  linuxadmin_2_part3.mp3  linuxadmin_2_part5.mp3
+linuxadmin_2_part2.mp3  linuxadmin_2_part4.mp3  linuxadmin_2_part6.mp3
+
+
+samah@localhost:~/labs$ mkdir -p manual/chapters
+samah@localhost:~/labs$ ls
+linux_admin1           training_cahpter2.txt  training_cahpter6.txt
+linux_admin2           training_cahpter3.txt  training_cahpter7.txt
+manual                 training_cahpter4.txt  training_cahpter8.txt
+training_cahpter1.txt  training_cahpter5.txt  training_plans
+samah@localhost:~/labs$ ls manual/
+chapters
+samah@localhost:~/labs$ cd manual/
+samah@localhost:~/labs/manual$ mkdir arcive review
+samah@localhost:~/labs/manual$ ls
+arcive  chapters  review
+samah@localhost:~/labs/manual$ cd ..
+samah@localhost:~/labs$ ls 
+linux_admin1           training_cahpter2.txt  training_cahpter6.txt
+linux_admin2           training_cahpter3.txt  training_cahpter7.txt
+manual                 training_cahpter4.txt  training_cahpter8.txt
+training_cahpter1.txt  training_cahpter5.txt  training_plans
+
+samah@localhost:~/labs$ mv training_chapter* manual/chapters/
+samah@localhost:~/labs$ ls
+linux_admin1  linux_admin2  manual  training_plans
+
+samah@localhost:~/labs$ ls manual/chapters/
+training_chapter1.txt  training_chapter4.txt  training_chapter7.txt
+training_chapter2.txt  training_chapter5.txt  training_chapter8.txt
+training_chapter3.txt  training_chapter6.txt
+
+
+samah@localhost:~/labs/manual/chapters$ mv training_chapter{1..2}.txt ~/labs/manual/review/
+samah@localhost:~/labs/manual/chapters$ ls
+training_chapter3.txt  training_chapter5.txt  training_chapter7.txt
+training_chapter4.txt  training_chapter6.txt  training_chapter8.txt
+samah@localhost:~/labs/manual/chapters$ ls ../review/
+training_chapter1.txt  training_chapter2.txt
+
+
+
+samah@localhost:~/labs$ cp linux_admin2/*part1* manual/arcive/
+samah@localhost:~/labs$ cp linux_admin2/*part2* manual/review/
+samah@localhost:~/labs$ ls manual/arcive/
+linuxadmin_2_part1.mp3
+samah@localhost:~/labs$ ls manual/review/
+linuxadmin_2_part2.mp3  training_chapter1.txt  training_chapter2.txt
+
+
+samah@localhost:~/labs$ tree -f
+.
+├── ./linux_admin1
+│   ├── ./linux_admin1/linuxadmin_1_part1.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part2.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part3.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part4.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part5.mp3
+│   └── ./linux_admin1/linuxadmin_1_part6.mp3
+├── ./linux_admin2
+│   ├── ./linux_admin2/linuxadmin_2_part1.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part2.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part3.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part4.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part5.mp3
+│   └── ./linux_admin2/linuxadmin_2_part6.mp3
+├── ./manual
+│   ├── ./manual/arcive
+│   │   └── ./manual/arcive/linuxadmin_2_part1.mp3
+│   ├── ./manual/chapters
+│   │   ├── ./manual/chapters/training_chapter3.txt
+│   │   ├── ./manual/chapters/training_chapter4.txt
+│   │   ├── ./manual/chapters/training_chapter5.txt
+│   │   ├── ./manual/chapters/training_chapter6.txt
+│   │   ├── ./manual/chapters/training_chapter7.txt
+│   │   └── ./manual/chapters/training_chapter8.txt
+│   └── ./manual/review
+│       ├── ./manual/review/linuxadmin_2_part2.mp3
+│       ├── ./manual/review/training_chapter1.txt
+│       └── ./manual/review/training_chapter2.txt
+└── ./training_plans
+    ├── ./training_plans/session1_training_plan.txt
+    └── ./training_plans/session2_training_plan.txt
+	
+samah@localhost:~/labs/manual$ rm review/
+rm: cannot remove 'review/': Is a directory
+samah@localhost:~/labs/manual$ rm -r review/
+samah@localhost:~/labs/manual$ rm -r arcive
+samah@localhost:~/labs/manual$ ls 
+chapters
+samah@localhost:~/labs/manual$ cd ../
+samah@localhost:~/labs$ 
+samah@localhost:~/labs$ ls
+linux_admin1  linux_admin2  manual  training_plans
+samah@localhost:~/labs$ tree -f
+.
+├── ./linux_admin1
+│   ├── ./linux_admin1/linuxadmin_1_part1.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part2.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part3.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part4.mp3
+│   ├── ./linux_admin1/linuxadmin_1_part5.mp3
+│   └── ./linux_admin1/linuxadmin_1_part6.mp3
+├── ./linux_admin2
+│   ├── ./linux_admin2/linuxadmin_2_part1.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part2.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part3.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part4.mp3
+│   ├── ./linux_admin2/linuxadmin_2_part5.mp3
+│   └── ./linux_admin2/linuxadmin_2_part6.mp3
+├── ./manual
+│   └── ./manual/chapters
+│       ├── ./manual/chapters/training_chapter3.txt
+│       ├── ./manual/chapters/training_chapter4.txt
+│       ├── ./manual/chapters/training_chapter5.txt
+│       ├── ./manual/chapters/training_chapter6.txt
+│       ├── ./manual/chapters/training_chapter7.txt
+│       └── ./manual/chapters/training_chapter8.txt
+└── ./training_plans
+    ├── ./training_plans/session1_training_plan.txt
+    └── ./training_plans/session2_training_plan.txt
+
+6 directories, 20 files
+samah@localhost:~/labs$ 
