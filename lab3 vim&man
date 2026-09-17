@@ -23,7 +23,7 @@ samah@localhost:~$man tail
  Manual page tail(1) line 23/103 37% (press h for help or q to quit)
 
   2. Search all manual pages for the keyword zip. 
-samah@localhost:~$man zip
+samah@localhost:~$man -k zip
 
 3. Display the built-in shell help for the cd command (use help, not man). 
 samah@localhost:~$help cd
