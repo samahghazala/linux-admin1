@@ -1,0 +1,139 @@
+Section 1: Documentation & Command Help
+  1. Open the manual page for the tail command. Search for the keyword follow using /follow, then press q to exit. 
+
+samah@localhost:~$man tail
+/follow
+      -f, --follow[={name|descriptor}]
+              output appended data as the file grows;
+
+              an absent option argument means 'descriptor'
+
+       -F     same as --follow=name --retry
+
+       -n, --lines=[+]NUM
+              output  the  last NUM lines, instead of the last 10; or use
+              -n +NUM to skip NUM-1 lines at the start
+
+       --max-unchanged-stats=N
+              with --follow=name, reopen a FILE which has not
+
+              changed size after N (default 5) iterations to  see  if  it
+              has been unlinked or renamed (this is the usual case of ro‐
+              tated  log files); with inotify, this option is rarely use‐
+ Manual page tail(1) line 23/103 37% (press h for help or q to quit)
+
+  2. Search all manual pages for the keyword zip. 
+samah@localhost:~$man zip
+
+3. Display the built-in shell help for the cd command (use help, not man). 
+samah@localhost:~$help cd
+
+4.Display the binary and manual page paths for passwd. 
+samah@localhost:~$ man -w passwd
+/usr/share/man/man1/passwd.1.gz
+samah@localhost:~$ which passwd
+/usr/bin/passwd
+=======================================================================================================================
+
+Section 2: Data Generation & Vim Editing
+
+1. Run the following command to generate sample data. This lists /etc in long format, takes the first 10 lines, and writes them into audit.txt: 
+samah@localhost:~$ ls -l /etc | head >audio.txt
+samah@localhost:~$ cat audio.txt 
+total 1316
+-rw-r--r--.  1 root                 root                     16 Aug 21 16:16 adjtime
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+drwxr-xr-x.  3 root                 root                     65 Aug 21 16:13 alsa
+drwxr-xr-x.  2 root                 root                   4096 Aug 21 16:13 alternatives
+-rw-r--r--.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+samah@localhost:~$
+
+2. Open audit.txt in vim with the cursor placed directly on the last line. 
+samah@localhost:~$ vim + audio.txt  # you can also use vim filename and press G in the file
+
+○ Delete line 1 (the total ... line) using dd. 
+samah@localhost:~$ vim audio.txt  # use dd for delete the first line
+samah@localhost:~$ cat audio.txt 
+-rw-r--r--.  1 root                 root                     16 Aug 21 16:16 adjtime
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+drwxr-xr-x.  3 root                 root                     65 Aug 21 16:13 alsa
+drwxr-xr-x.  2 root                 root                   4096 Aug 21 16:13 alternatives
+-rw-r--r--.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+samah@localhost:~$ 
+
+○ Copy line 2 using yy, move to the bottom of the file using G, and paste it using p. 
+samah@localhost:~$ vim audio.txt  # copy 2nd line using yy then go to the end of file using G then paste using p
+samah@localhost:~$ cat audio.txt 
+-rw-r--r--.  1 root                 root                     16 Aug 21 16:16 adjtime
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+drwxr-xr-x.  3 root                 root                     65 Aug 21 16:13 alsa
+drwxr-xr-x.  2 root                 root                   4096 Aug 21 16:13 alternatives
+-rw-r--r--.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+samah@localhost:~$ 
+
+○ Use Visual Block mode (Ctrl+v) to select the first 10 characters (the permission bits) across lines 1 through 5, then press d to delete that block. 
+samah@localhost:~$ vim audio.txt #Ctrl + v && then 9l && then 4j && then  d 
+samah@localhost:~$ cat audio.txt 
+.  1 root                 root                     16 Aug 21 16:16 adjtime
+.  1 root                 root                   1529 Nov 29  2023 aliases
+.  3 root                 root                     65 Aug 21 16:13 alsa
+.  2 root                 root                   4096 Aug 21 16:13 alternatives
+.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+samah@localhost:~$  
+
+○ Use Visual Line mode (Shift+v) to select line 3, then press d to delete it. 
+samah@localhost:~$ vim audio.txt  # press 3g to go directly to line 3 then shift+v then d
+samah@localhost:~$ cat audio.txt 
+.  1 root                 root                     16 Aug 21 16:16 adjtime
+.  1 root                 root                   1529 Nov 29  2023 aliases
+.  2 root                 root                   4096 Aug 21 16:13 alternatives
+.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+samah@localhost:~$ 
+========================================================================================================================
+Section 3: File Appending & Backup  
+
+1. Append a line of 12 dashes (------------) to the bottom of audit.txt using the echo command without opening an editor. 
+samah@localhost:~$ echo "------------" >> audio.txt 
+samah@localhost:~$ cat audio.txt 
+.  1 root                 root                     16 Aug 21 16:16 adjtime
+.  1 root                 root                   1529 Nov 29  2023 aliases
+.  2 root                 root                   4096 Aug 21 16:13 alternatives
+.  1 root                 root                    541 Dec 11  2024 anacrontab
+-rw-r--r--.  1 root                 root                     55 Dec 16  2024 asound.conf
+-rw-r--r--.  1 root                 root                      1 Nov  6  2024 at.deny
+drwxr-x---.  4 root                 root                    100 Aug 21 16:09 audit
+drwxr-xr-x.  3 root                 root                   4096 Aug 21 16:16 authselect
+-rw-r--r--.  1 root                 root                   1529 Nov 29  2023 aliases
+------------
+samah@localhost:~$ 
+
+2. Copy audit.txt to a new file named audit_backup.txt. 
+samah@localhost:~$ cp audio.txt audio.backup.txt  
+samah@localhost:~$ ls 
+audio.backup.txt  Desktop    Downloads  Music     Public     Videos
+audio.txt         Documents  labs       Pictures  Templates
+samah@localhost:~$ 
+
