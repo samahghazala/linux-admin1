@@ -1,0 +1,157 @@
+Task 1: Group and User Creation 
+ 1. Create a new group named sysadmins and manually assign it the GID 35000.
+root@localhost:~# groupadd -g 35000 sysadmins
+root@localhost:~# tail -n3 /etc/group
+devops_intern:x:4000:
+sysadmin1:x:2001:
+sysadmins:x:35000:
+
+ 2. Create two users named sysadmin1 and sysadmin2. Ensure that sysadmins is their supplementary group.
+root@localhost:~# for user in sysadmin1 sysadmin2; do  useradd -G sysadmins "$user"; done
+root@localhost:~# tail -n3 /etc/passwd
+samah:x:1000:1000:samah:/home/samah:/bin/bash
+sysadmin1:x:1001:1001::/home/sysadmin1:/bin/bash
+sysadmin2:x:1002:1002::/home/sysadmin2:/bin/bash
+root@localhost:~# id sysadmin1
+uid=1001(sysadmin1) gid=1001(sysadmin1) groups=1001(sysadmin1),35000(sysadmins)
+root@localhost:~# id sysadmin2
+uid=1002(sysadmin2) gid=1002(sysadmin2) groups=1002(sysadmin2),35000(sysadmins)
+root@localhost:~# 
+
+ 
+ 3. Set the initial password for both users to redhat.  
+ root@localhost:~# passwd sysadmin1
+New password: 
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password: 
+passwd: password updated successfully
+root@localhost:~# passwd sysadmin2
+New password: 
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password: 
+passwd: password updated successfully
+root@localhost:~# 
+
+
+ Task 2: Password Aging and Account Expiry
+ 1. Set the maximum password age to 30 days for both users so they are prompted to change it monthly.
+root@localhost:~# for user in sysadmin1 sysadmin2; do chage -M 30 "$user"; done
+root@localhost:~# chage -l sysadmin1
+Last password change					: Sep 24, 2026
+Password expires					: Oct 24, 2026
+Password inactive					: never
+Account expires						: never
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+root@localhost:~# chage -l sysadmin2
+Last password change					: Sep 24, 2026
+Password expires					: Oct 24, 2026
+Password inactive					: never
+Account expires						: never
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+root@localhost:~# 
+
+ 2. Set the account expiration date for both users to exactly 90 days from today. (Use the date command to calculate the correct string).
+root@localhost:~# for user in sysadmin1 sysadmin2; do chage -E "$(date -d "+90 days" +%Y-%m-%d)" "$user"; done
+root@localhost:~# chage -l sysadmin1
+Last password change					: Sep 24, 2026
+Password expires					: Oct 24, 2026
+Password inactive					: never
+Account expires						: Dec 23, 2026
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+root@localhost:~# chage -l sysadmin2
+Last password change					: Sep 24, 2026
+Password expires					: Oct 24, 2026
+Password inactive					: never
+Account expires						: Dec 23, 2026
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+root@localhost:~# 
+
+ 3. Force an immediate password change so that both users are required to set a new password the very first time they log into the system. 
+root@localhost:~# for user in sysadmin1 sysadmin2; do chage -d 0 "$user"; done
+root@localhost:~# chage -l sysadmin2
+Last password change					: password must be changed
+Password expires					: password must be changed
+Password inactive					: password must be changed
+Account expires						: Dec 23, 2026
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+root@localhost:~# chage -l sysadmin1
+Last password change					: password must be changed
+Password expires					: password must be changed
+Password inactive					: password must be changed
+Account expires						: Dec 23, 2026
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 30
+Number of days of warning before password expires	: 7
+
+
+ Task 3: Shared Directory and Permissions 
+ 1. Create a directory at the path /opt/sysadmin_tools.
+root@localhost:~# ls -l /opt
+total 0
+drwxr-xr-x. 2 root root 6 Sep 25 01:48 sysadmin_tools
+
+ 2. Change the group ownership of this directory so it is owned by the sysadmins group.
+root@localhost:~# chgrp sysadmins /opt/sysadmin_tools/
+root@localhost:~# ls -l /opt
+total 0
+drwxr-xr-x. 2 root sysadmins 6 Sep 25 01:48 sysadmin_tools
+ 
+ 3. Using the Symbolic Method, grant the group members write access to this directory.
+root@localhost:~# chmod g+w /opt/sysadmin_tools/
+root@localhost:~# ls -l /opt
+total 0
+drwxrwxr-x. 2 root sysadmins 6 Sep 25 01:48 sysadmin_tools
+root@localhost:~# 
+
+
+ 4. Using the Octal Method, modify the permissions so that:
+ ○ The Owner has full access (Read, Write, Execute). 
+ ○ The Group has full access (Read, Write, Execute).
+ ○ Others have no permissions (cannot read, write, or enter the directory).
+ 
+root@localhost:~# chmod 770 /opt/sysadmin_tools/
+root@localhost:~# ls -l /opt
+total 0
+drwxrwx---. 2 root sysadmins 6 Sep 25 01:48 sysadmin_tools
+root@localhost:~# 
+
+ 
+ 
+ 
+ Task 4: Verification
+ 1. Verify the directory metadata: 
+ Run a command to show the permissions, owner, and group of /opt/sysadmin_tools.
+root@localhost:~# ls -l /opt
+total 0
+drwxrwx---. 2 root sysadmins 6 Sep 25 01:48 sysadmin_tools
+root@localhost:~# 
+
+
+ 2. Test User Access: 
+ ○ Switch to sysadmin1.
+ ○ Change the password as prompted.
+ ○ Navigate to /opt/sysadmin_tools and create an empty file named audit.txt.
+ ○ Switch to sysadmin2 and verify you can see the file created by the first user. 
+ sysadmin1@localhost:/opt$ ls -l
+total 0
+drwxrwx---. 2 root sysadmins 6 Sep 25 01:48 sysadmin_tools
+sysadmin1@localhost:/opt$ cd sysadmin_tools/
+sysadmin1@localhost:/opt/sysadmin_tools$ touch audit.txt
+sysadmin1@localhost:/opt/sysadmin_tools$ ls 
+audit.txt
+
+sysadmin2@localhost:~$ cd /opt/sysadmin_tools/
+sysadmin2@localhost:/opt/sysadmin_tools$ ls -l
+total 0
+-rw-r--r--. 1 sysadmin1 sysadmin1 0 Sep 25 02:04 audit.txt
+sysadmin2@localhost:/opt/sysadmin_tools$ 

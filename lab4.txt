@@ -1,0 +1,113 @@
+Phase 1: Group Infrastructure
+ 1. Create Group: Create a group named devops_interns with a Group ID (GID) of 4000. 
+root@localhost:~# groupadd -g 4000 devops_intern
+			
+ 2. Create Group: Create a group named temporary_admins. 
+root@localhost:~# groupadd temporary_admins
+			
+ 3. Modify Group: Rename the group temporary_admins to sysadmins and set its GID to 5000.
+root@localhost:~# groupmod -n sysadmins temporary_admins -g 5000
+root@localhost:~# getent group sysadmins
+sysadmins:x:5000:
+ 
+ 4. Verification: Verify the changes by inspecting the last 5 lines of /etc/group. 
+root@localhost:~# tail -n5 /etc/group
+tcpdump:x:72:
+plocate:x:979:
+samah:x:1000:
+devops_intern:x:4000:
+sysadmins:x:5000:
+
+ 
+ 
+ Phase 2: User Provisioning & Customization 
+ 1. Create User: Create user sysadmin1 with a User ID (UID) of 2001 and set the login shell to /bin/sh. 
+ root@localhost:~# useradd -u 2001 -s /bin/sh sysadmin1
+
+ 2. Create User: Create user sysadmin2 with a UID of 2002 and set their primary group to sysadmins. 
+ root@localhost:~# useradd -u 2002 -g sysadmins sysadmin2
+
+ 3. Create User & Password: Create user sysadmin3 with default settings and set a password for the account. 
+ root@localhost:~# useradd sysadmin3
+ root@localhost:~# passwd sysadmin3
+ passwd: password updated successfully
+
+ 4. Verification: Verify the user attributes (UID, GID, and Shell) by inspecting /etc/passwd.
+ root@localhost:~# tail -n3 /etc/passwd 
+ sysadmin1:x:2001:2001::/home/sysadmin1:/bin/sh
+ sysadmin2:x:2002:5000::/home/sysadmin2:/bin/bash
+ sysadmin3:x:2003:2003::/home/sysadmin3:/bin/bash
+
+
+
+ Phase 3: Account Modification & Membership 
+ 1. Modify User Attributes: For user sysadmin1, change the GECOS (comment) to "Senior System Admin" and change the login name to lead_admin. 
+root@localhost:~# usermod -c "Senior System Admin" -l lead_admin sysadmin1
+root@localhost:~# tail -n3 /etc/passwd 
+sysadmin2:x:2002:5000::/home/sysadmin2:/bin/bash
+sysadmin3:x:2003:2003::/home/sysadmin3:/bin/bash
+lead_admin:x:2001:2001:Senior System Admin:/home/sysadmin1:/bin/sh
+root@localhost:~# 
+
+ 
+ 2. Add Secondary Group: Add sysadmin2 to devops_interns as a secondary group. 
+root@localhost:~# usermod -G devops_intern sysadmin2
+root@localhost:~# id sysadmin2
+uid=2002(sysadmin2) gid=5000(sysadmins) groups=5000(sysadmins),4000(devops_intern)
+
+ 3. Assign Primary Group: Assign sysadmin3 to the sysadmins group using the -G option (Note the effect on existing secondary memberships).
+root@localhost:~# id sysadmin3
+uid=2003(sysadmin3) gid=2003(sysadmin3) groups=2003(sysadmin3)
+root@localhost:~# usermod -aG sysadmins  sysadmin3
+root@localhost:~# id sysadmin3
+uid=2003(sysadmin3) gid=2003(sysadmin3) groups=2003(sysadmin3),5000(sysadmins)
+root@localhost:~# 
+
+
+ 4. Remove Secondary Group: Remove sysadmin2 from the devops_interns group without deleting the user or the group. 
+root@localhost:~# gpasswd -d  sysadmin2 devops_intern 
+Removing user sysadmin2 from group devops_intern
+root@localhost:~# id sysadmin2
+uid=2002(sysadmin2) gid=5000(sysadmins) groups=5000(sysadmins)
+root@localhost:~# 
+ 
+ Phase 4: Verification & Cleanup 
+ 1. User ID Verification: Use the id command for all three users and compare the output with the records in /etc/passwd and /etc/group.
+ root@localhost:~# tail -n3 /etc/passwd
+sysadmin2:x:2002:5000::/home/sysadmin2:/bin/bash
+sysadmin3:x:2003:2003::/home/sysadmin3:/bin/bash
+lead_admin:x:2001:2001:Senior System Admin:/home/sysadmin1:/bin/sh
+root@localhost:~# tail -n5 /etc/group
+samah:x:1000:
+devops_intern:x:4000:
+sysadmins:x:5000:sysadmin3
+sysadmin1:x:2001:
+sysadmin3:x:2003:
+root@localhost:~# id lead_admin
+uid=2001(lead_admin) gid=2001(sysadmin1) groups=2001(sysadmin1)
+root@localhost:~# id sysadmin2
+uid=2002(sysadmin2) gid=5000(sysadmins) groups=5000(sysadmins)
+root@localhost:~# id sysadmin3
+uid=2003(sysadmin3) gid=2003(sysadmin3) groups=2003(sysadmin3),5000(sysadmins)
+root@localhost:~# 
+
+ 2. Group Membership Check: Check the /etc/group file to see which users are explicitly listed as members of sysadmins.
+root@localhost:~# cat /etc/group | grep sysadmins
+sysadmins:x:5000:sysadmin3
+root@localhost:~# 
+
+ 3. Cleanup: Delete sysadmin3 along with its home directory.
+root@localhost:~# ls /home 
+samah  sysadmin1  sysadmin2  sysadmin3
+root@localhost:~# userdel -r sysadmin3
+root@localhost:~# ls /home 
+samah  sysadmin1  sysadmin2
+root@localhost:~# 
+ 
+ 4. Final Verification: Verify that sysadmin3 no longer exists in /etc/passwd. 
+root@localhost:~# tail -n3 /etc/passwd
+samah:x:1000:1000:samah:/home/samah:/bin/bash
+sysadmin2:x:2002:5000::/home/sysadmin2:/bin/bash
+lead_admin:x:2001:2001:Senior System Admin:/home/sysadmin1:/bin/sh
+root@localhost:~# cat /etc/passwd | grep sysadmin3
+root@localhost:~#
