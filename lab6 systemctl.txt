@@ -1,0 +1,163 @@
+##Part 1: Package Discovery & Initial Service Setup ##
+  
+  Exercise 1.1: Package Manager Documentation Open the manual page for the primary package manager command on RHEL (dnf) to learn how to search for and install packages:
+  ==>man dnf 
+  
+  Exercise 1.2: Install and Deploy nginx
+   1. Install the nginx web server package using dnf. 
+   ==> sudo dnf install nginx -y
+   
+   2. Start the nginx service. 
+   ==> systemctl start nginx
+   
+   3. Enable nginx so that it starts automatically upon system boot. 
+   ==>systemctl enable nginx
+   
+   4. Verify and confirm that nginx is currently active (running) and enabled. 
+   ==>systemctl status nginx
+    ● nginx.service - The nginx HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: disabled)
+     Active: active (running) since Thu 2026-10-08 00:18:23 EEST; 1min 53s ago
+	 
+##############################################################################################	 
+ 
+
+##Part 2: Port Conflict Analysis & Service Masking ##
+   
+  Exercise 2.1: Install and Launch httpd 
+   1. Install the Apache HTTP Server package (httpd) using dnf. 
+   ==>sudo dnf install httpd -y
+   
+   2. Attempt to start the httpd service while nginx is actively running.
+   ==> sudo systemctl start httpd
+	    Job for httpd.service failed because the control process exited with error code.
+		See "systemctl status httpd.service" and "journalctl -xeu httpd.service" for details.
+		
+   3. Observe the output returned by the system. Did httpd start successfully or fail? 
+   ==> journalctl -xeu httpd.service
+		The unit httpd.service has entered the 'failed' state with result 'exit-code'.
+        Oct 08 00:25:24 localhost.localdomain systemd[1]: Failed to start httpd.service - The Apach>
+        Subject: A start job for unit httpd.service has failed
+        Defined-By: systemd
+   
+  Exercise 2.2: Log Inspection & Root Cause Analysis
+  1. Use journalctl to inspect the recent logs generated specifically by the httpd unit. 
+  ==> journalctl -xeu httpd.service
+  
+  2. Review the log output to locate the error message.
+  ==>Oct 08 00:25:24 localhost.localdomain systemd[1]: Failed to start httpd.service - The Apach>
+	 Subject: A start job for unit httpd.service has failed
+	 
+  3. Question: What is the specific error message and port number causing httpd to fail? 
+  ==>The job identifier is 21112 and the job result is failed.
+  
+  
+  Exercise 2.3: Service Masking & Failover 
+  1. Stop the running nginx service.
+  ==> sudo systemctl stop nginx
+  
+  2. Mask the nginx service unit to prevent any user or automated script from starting it.
+  ==> sudo systemctl mask nginx
+	  Created symlink '/etc/systemd/system/nginx.service' → '/dev/null'.
+      
+	  
+  3. Test your mask configuration by explicitly attempting to start nginx.
+  ==> sudo systemctl start nginx
+	  Failed to start nginx.service: Unit nginx.service is masked.
+	  
+  4. Question: What error or message does systemctl return when you attempt to start a masked service? 
+  ==> Failed to start nginx.service: Unit nginx.service is masked.
+  
+  5. Start and enable the httpd service now that nginx is masked and stopped. 
+  ==>  sudo systemctl start httpd
+	   
+
+  6. Verify that httpd is currently active (running).
+  ==> sudo systemctl status httpd
+		● httpd.service - The Apache HTTP Server
+		Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+		Active: active (running) since Thu 2026-10-08 00:47:09 EEST; 16s ago
+
+  Exercise 2.4: Service Lifecycle Operations 
+  1. Reload the configuration of the active httpd service without interrupting running processes. 
+  ==> sudo systemctl reload httpd
+	  sudo systemctl status httpd
+	  ● httpd.service - The Apache HTTP Server
+        Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+        Active: active (running) since Thu 2026-10-08 00:47:09 EEST; 27min ago
+		
+  2. Perform a full restart of the httpd service. 
+  ==> sudo systemctl restart httpd
+      ● httpd.service - The Apache HTTP Server
+        Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; preset: disabled)
+        Active: active (running) since Thu 2026-10-08 01:16:36 EEST; 5s ago
+
+  ###############################################################################################
+  
+  Part 3: Advanced Logging with journalctl 
+  Exercise  3.1: Live Log Streaming 
+  1. Run a journalctl command to stream and follow the logs of the httpd service in real time.
+  ==>sudo journalctl -u httpd -f
+	 Oct 08 01:16:24 localhost.localdomain httpd[16455]: Server configured, listening on: port 80
+	 Oct 08 01:16:34 localhost.localdomain systemd[1]: Stopping httpd.service - The Apache HTTP Server...
+	 Oct 08 01:16:35 localhost.localdomain systemd[1]: httpd.service: Deactivated successfully.
+	 Oct 08 01:16:35 localhost.localdomain systemd[1]: Stopped httpd.service - The Apache HTTP Server.
+	 Oct 08 01:16:35 localhost.localdomain systemd[1]: httpd.service: Consumed 12.662s CPU time, 20.3M memory peak, 1.4M memory swap peak.
+	 Oct 08 01:16:35 localhost.localdomain systemd[1]: Starting httpd.service - The Apache HTTP Server...
+
+  Exercise 3.2: Log Filtering by Boot, Severity, and Time 
+  1. Display system logs generated during the current boot session only. 
+  ==> sudo journalctl -b
+	  Aug 21 16:17:46 localhost kernel: Linux version 6.12.0-55.9.1.el10_0.x86_64 (mockbuild@d947>
+	  Aug 21 16:17:46 localhost kernel: Command line: BOOT_IMAGE=(hd0,gpt2)/vmlinuz-6.12.0-55.9.1>
+   	  Aug 21 16:17:46 localhost kernel: [Firmware Bug]: TSC doesn't count with P0 frequency!
+	  Aug 21 16:17:46 localhost kernel: BIOS-provided physical RAM map:
+	  Aug 21 16:17:46 localhost kernel: BIOS-e820: [mem 0x0000000000000000-0x0000000000000fff] AC>
+      Aug 21 16:17:46 localhost kernel: BIOS-e820: [mem 0x0000000000001000-0x0000000000001fff] re>
+
+  2. Execute a journalctl query that filters system logs to display only messages with severity levels ranging from Error to Emergency (err to emerg).
+  ==> udo journalctl -p err..emerg
+	  Aug 21 16:17:46 localhost kernel: [Firmware Bug]: cpu 0, try to use APIC520 (LVT offset 2) >
+	  Aug 21 16:17:46 localhost kernel: [Firmware Bug]: cpu 1, try to use APIC520 (LVT offset 2) >
+	  Aug 21 16:17:52 localhost systemd[1]: Failed to mount run-vmblock\x2dfuse.mount - VMware vm>
+	  Aug 21 16:17:54 localhost kernel: piix4_smbus 0000:00:07.3: SMBus base address uninitialize>
+	  Aug 21 16:17:56 localhost alsactl[1133]: /usr/sbin/alsactl: load_state:1715: Cannot open /v>
+	  Aug 21 16:17:56 localhost alsactl[1133]: alsa-lib main.c:1554:(snd_use_case_mgr_open) error>
+	  Aug 21 16:17:56 localhost kernel: Warning: Unmaintained driver is detected: ip_set
+	  Aug 21 16:18:11 localhost.localdomain gdm-password][3739]: gkr-pam: unable to locate daemon>
+	  Aug 29 23:14:48 localhost.localdomain gdm-password][7603]: pam_unix(gdm-password:auth): con>
+	  Aug 29 23:14:48 localhost.localdomain gdm-password][7603]: pam_unix(gdm-password:auth): aut>
+	  Oct 08 00:25:24 localhost.localdomain systemd[1]: Failed to start httpd.service - The Apach>
+	  lines 1-11/11 (END)
+
+  
+  3. Display the logs for the httpd service generated within the last 1 hour.
+  ==> sudo journalctl -u httpd --since "1 hour ago"
+	  Oct 08 00:47:08 localhost.localdomain systemd[1]: Starting httpd.service - The Apache HTTP Server...
+	  Oct 08 00:47:08 localhost.localdomain (httpd)[16455]: httpd.service: Referenced but unset environment variab>
+	  Oct 08 00:47:09 localhost.localdomain httpd[16455]: AH00558: httpd: Could not reliably determine the server'>
+	  Oct 08 00:47:09 localhost.localdomain httpd[16455]: Server configured, listening on: port 80
+	  Oct 08 00:47:09 localhost.localdomain systemd[1]: Started httpd.service - The Apache HTTP Server.
+	  Oct 08 01:14:43 localhost.localdomain systemd[1]: Reloading httpd.service - The Apache HTTP Server...
+	  Oct 08 01:14:43 localhost.localdomain (httpd)[18217]: httpd.service: Referenced but unset environment variab>
+
+#######################################################################################################################
+
+  Part 4: Environment Cleanup
+  Exercise 4.1: System Restoration 
+  1. Unmask the nginx service. 
+  ==> sudo systemctl unmask nginx
+      Removed '/etc/systemd/system/nginx.service'.
+
+
+  2. Stop both httpd and nginx services. 
+  ==>  sudo systemctl stop nginx
+       sudo systemctl stop httpd
+  
+  3. Disable both httpd and nginx from starting at system boot. 
+  ==>   sudo systemctl disable httpd
+        sudo systemctl disable nginx
+        Removed '/etc/systemd/system/multi-user.target.wants/nginx.service'.
+
+  4. Remove both httpd and nginx packages from the system using dnf. 
+  ==>  sudo dnf remove httpd nginx
