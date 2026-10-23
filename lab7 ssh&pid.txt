@@ -1,0 +1,76 @@
+Lab Objectives 
+  The objective of this lab is to manually manage process lifecycles using specific Linux signals (SIGSTOP, SIGCONT, and SIGKILL) 
+  while monitoring state transitions (T to S). 
+  Additionally, it covers setting up passwordless SSH authentication for a local user (labuser) by generating and copying an RSA key pair on the localhost.
+  Note: All tasks in this lab are to be performed on the same local machine (Localhost).
+  
+   ****Part 1: Process Signals & State Transitions Objective: ****
+   
+  Manually control a process's lifecycle using specific Linux signals (SIGCONT: 18 and SIGSTOP: 19).
+  You must identify the correct Process ID (PID) and transition the process between states.
+  
+  1. Start a Background Process 
+  ○ Run a process that remains active indefinitely in the background:
+    ===>  sleep infinity & 
+  
+  
+  2. Identify the Process ID (PID) 
+  ○ Determine the PID of the running sleep infinity process.
+	===> ~$ pidof sleep
+            20221
+
+
+  
+  
+  3. Suspend the Process (SIGSTOP) 
+  ○ Action: Use the kill command with Signal 19 to pause the process.
+	===>~$ kill -19 20221
+			[1]+  Stopped  sleep infinity
+			
+			
+  ○ Verification: Check the process status; it must show the state code T (Stopped).
+	===>~$ ps -aux |grep 20221
+		   samah      20221  0.0  0.0 226820  1608 pts/0    T    15:22   0:00 sleep infinity
+
+  
+  
+  4. Resume the Process (SIGCONT) 
+  ○ Action: Use the kill command with Signal 18 to wake the process. 
+	===>$ kill -18 20221
+
+
+  ○ Verification: Check the status; it must change from T back to S (Interruptible Sleep).
+    ===>~$ ps -aux |grep 20221
+         samah      20221  0.0  0.0 226820  1608 pts/0    S    15:22   0:00 sleep infinity
+  
+  
+  5. Terminate the Process 
+  ○ Action: Kill the process using the signal for immediate termination (Signal 9).
+	===> ~$ kill -9 20221
+			[1]+  Killed                  sleep infinity
+
+
+
+  ****Part 2: SSH (Key-Based Authentication)****
+  1. Create a new user named labuser with a home directory. 
+	===> ~$ sudo adduser -m labuser
+
+  
+  2. Generate an SSH key pair for your current user without a passphrase.
+	===>~$ ssh-keygen -t rsa
+		Generating public/private rsa key pair.
+		Enter file in which to save the key (/home/samah/.ssh/id_rsa): 
+		Created directory '/home/samah/.ssh'.
+
+  
+  3. Copy the public key to labuser on the same machine. 
+	===> sudo mkdir -p /home/labuser/.ssh
+    ===> sudo sh -c "cat /home/samah/.ssh/id_rsa.pub >> /home/labuser/.ssh/authorized_keys"
+  
+  4. Verify by logging into labuser@<IP> via SSH without being prompted for a password.
+	===>samah@localhost:~$ ssh labuser@192.168.17.***
+        Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+        labuser@localhost:~$ 
+
+
+  
