@@ -6,6 +6,7 @@ lab08
 1. Find your active interface name and the Default Gateway of your system.
    
    `samah@localhost:~$ ip -br address show`
+   
 		%%lo               UNKNOWN        127.0.0.1/8 ::1/128
 		ens160           UP             192.168.17.130/24 fe80::20c:29ff:fea0:94e1/64 %%
 		
@@ -18,6 +19,7 @@ lab08
 7. Verify that the interface now displays the new IP address using the command line.
    
 	`$ip a`
+
 		%%1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000==
 	    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00==
 	    inet 127.0.0.1/8 scope host lo==
@@ -32,6 +34,7 @@ lab08
         valid_lft forever preferred_lft forever %%
    
 	`$ nmcli connection show`
+
 		%%NAME       UUID                                  TYPE      DEVICE 
 		network_lab  11938ca6-57df-4d5e-925c-e9f495573855  ethernet  ens160 
 		lo           0abedc80-6f1c-433a-9ad3-9333daacb5c6  loopback  lo     
