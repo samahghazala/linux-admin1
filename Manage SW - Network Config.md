@@ -46,7 +46,8 @@ lab08
  2. Manually add the configuration for the EPEL 10 repository using the following URL: https://dl.fedoraproject.org/pub/epel/10/Everything/x86_64/. 
 3. Ensure the repository is enabled and GPG check is disabled.
    
-	`~$ sudo vim /etc/yum.repos.d/epel.repo` 
+	`~$ sudo vim /etc/yum.repos.d/epel.repo`
+
 	`~$ sudo cat /etc/yum.repos.d/epel.repo`
 
 		%%[AppStream]
